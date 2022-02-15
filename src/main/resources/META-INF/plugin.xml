@@ -36,18 +36,22 @@
         <a href="http://weirddev.com/testme/release-notes">Complete Release Notes listing</a>
     ]]>
   </change-notes>
-  <!-- please see https://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-  <idea-version since-build="211"/>
+    <!-- please see https://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
+    <idea-version since-build="190"/>
   <depends>com.intellij.modules.java</depends>
   <depends>JUnit</depends>
   <depends optional="true" config-file="plugin-groovy.xml">org.intellij.groovy</depends>
   <depends optional="true" config-file="plugin-scala.xml">org.intellij.scala</depends>
   <extensions defaultExtensionNs="com.intellij">
-    <applicationConfigurable parentId="root" displayName="TestMe" id="preferences.TestMe" instance="com.weirddev.testme.intellij.ui.settings.TestMeConfigurable"/>
-    <projectConfigurable  id="preferences.TestMe.templates"  parentId="preferences.TestMe"  displayName="TestMe Templates" provider="com.weirddev.testme.intellij.ui.template.TestTemplatesConfigurable$Provider"/>
+    <applicationConfigurable parentId="root" displayName="TestMe" id="preferences.TestMe"
+                             instance="com.weirddev.testme.intellij.ui.settings.TestMeConfigurable"/>
+    <projectConfigurable id="preferences.TestMe.templates" parentId="preferences.TestMe" displayName="TestMe Templates"
+                         provider="com.weirddev.testme.intellij.ui.template.TestTemplatesConfigurable$Provider"/>
     <applicationService serviceImplementation="com.weirddev.testme.intellij.configuration.TestMeConfigPersistent"/>
-    <applicationService serviceImplementation="com.weirddev.testme.intellij.ui.template.ExportableFileTemplateSettings" serviceInterface="com.weirddev.testme.intellij.ui.template.FileTemplateSettings"/>
-    <webHelpProvider implementation="com.weirddev.testme.intellij.configuration.TestMeWebHelpProvider" id="com.weirddev.testme"/>
+    <applicationService serviceImplementation="com.weirddev.testme.intellij.ui.template.ExportableFileTemplateSettings"
+                        serviceInterface="com.weirddev.testme.intellij.ui.template.FileTemplateSettings"/>
+    <webHelpProvider implementation="com.weirddev.testme.intellij.configuration.TestMeWebHelpProvider"
+                     id="com.weirddev.testme"/>
     <projectService serviceImplementation="com.weirddev.testme.intellij.ui.template.TestMeTemplateManager"/>
     <applicationService serviceImplementation="com.weirddev.testme.intellij.ui.template.TestMeTemplateManager"/>
     <postStartupActivity implementation="com.weirddev.testme.intellij.TestMePluginRegistration"/>
@@ -56,19 +60,19 @@
   </project-components>
 
   <actions>
-    <action id="GotoTest" class="com.weirddev.testme.intellij.action.GotoTestOrCodeActionExt"  overrides="true"/>
+    <action id="GotoTest" class="com.weirddev.testme.intellij.action.GotoTestOrCodeActionExt" overrides="true"/>
     <action id="testme.action.generators" class="com.weirddev.testme.intellij.action.TestMeAction"
-            text="&amp;TestMe..." description="TestMe Unit test generators" icon="/icons/TestMe.png" >
-      <keyboard-shortcut first-keystroke="alt shift Q" keymap="$default" />
-      <add-to-group group-id="GenerateGroup" anchor="last" />
+            text="&amp;TestMe..." description="TestMe Unit test generators" icon="/icons/TestMe.png">
+      <keyboard-shortcut first-keystroke="alt shift Q" keymap="$default"/>
+      <add-to-group group-id="GenerateGroup" anchor="last"/>
       <add-to-group group-id="CodeMenu" anchor="first"/>
     </action>
-    <!--<group id="testme.group.generators"-->
-           <!--class="com.weirddev.testme.intellij.action.TestGeneratorsGroupAction"-->
-           <!--popup="true"-->
-           <!--text="TestMe"-->
-           <!--icon="/icons/TestMe.png" description="TestMe test generators">-->
+      <!--<group id="testme.group.generators"-->
+      <!--class="com.weirddev.testme.intellij.action.TestGeneratorsGroupAction"-->
+      <!--popup="true"-->
+      <!--text="TestMe"-->
+      <!--icon="/icons/TestMe.png" description="TestMe test generators">-->
       <!--<add-to-group group-id="GenerateGroup" relative-to-action="GenerateCopyright" anchor="after" />-->
-    <!--</group>-->
+      <!--</group>-->
   </actions>
 </idea-plugin>

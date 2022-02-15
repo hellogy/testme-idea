@@ -240,7 +240,8 @@ public class TestMeTemplateManager extends FileTemplateManager implements Persis
     Map<String, List<TemplateDescriptor>> oobEnabledTemplates = templateRegistry.getEnabledTemplateDescriptors().stream().collect(Collectors.groupingBy(TemplateDescriptor::getFilename));
     return allTemplates.stream()
             .filter(t -> t instanceof CustomFileTemplate || oobEnabledTemplates.containsKey(t.getQualifiedName()))
-            .map(t -> Optional.ofNullable(oobEnabledTemplates.get(t.getQualifiedName())).map(l->l.get(0)).orElse(new TemplateDescriptor(t.getName(),t.getName(),t.getQualifiedName(), resolveLanguage(t), TemplateRole.Tester)) )
+            .map(t -> Optional.ofNullable(oobEnabledTemplates.get(t.getQualifiedName())).map(l->l.get(0))
+                    .orElse(new TemplateDescriptor(t.getName(),t.getName(),t.getQualifiedName(), resolveLanguage(t), TemplateRole.Tester)) )
             .collect(Collectors.toList());
   }
 
