@@ -2,7 +2,7 @@
   <id>com.gy.ut.template</id>
   <name>Idea-Unit-Test-Template</name>
   <version>1.0.0</version>
-  <vendor email="1426555734@qq.com" url="http://hellogy.cn">GyDev</vendor>
+  <vendor email="1426555734@qq.com" url="http://weirddev.com">GyDev</vendor>
 
   <description><![CDATA[
    <p>Auto Generate Unit Tests in Java, Groovy or Scala.</p>

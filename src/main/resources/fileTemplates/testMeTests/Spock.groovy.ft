@@ -14,7 +14,7 @@ import org.mockito.MockitoAnnotations
 #parse("File Header.java")
 class ${CLASS_NAME}  extends Specification {
 def testObj = new $TESTED_CLASS.canonicalName ()
-#grRenderMockedFields($TESTED_CLASS.fields)
+#getRenderMockedFields($TESTED_CLASS.fields)
 #if($hasMocks)
     def setup() {
 
@@ -47,7 +47,7 @@ def testObj = new $TESTED_CLASS.canonicalName ()
 
 #end
         when:
-        def expectedResult =  #grRenderParameterizedMethodCall($method, $TESTED_CLASS.name, $paraTestComponents.methodClassParamsStr)
+        def expectedResult =  #getRenderParameterizedMethodCall($method, $TESTED_CLASS.name, $paraTestComponents.methodClassParamsStr)
 
 #if(!$method.hasReturn())
 
