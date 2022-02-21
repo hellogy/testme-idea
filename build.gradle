@@ -150,7 +150,7 @@ apply from: "$rootProject.projectDir/shared.gradle"
 enabledPlugins = filterPlugins(enabledPlugins)
 
 intellij {
-    pluginName 'TestMe'
+    pluginName 'Test'
     instrumentCode = shouldInstrumentCode
     version ideaVersion
     type ideaType

@@ -28,6 +28,7 @@ public class TemplateRegistry {
             ".groovy";
     public static final String SPECS2_MOCKITO_SCALA_TEMPLATE = "Specs2 & Mockito.scala";
     public static final String SPOCK = "Spock.groovy";
+    public static final String SPOCK_POWERMOCK = "Spock+PowerMock.groovy";
 
     static {
 /*
@@ -71,6 +72,10 @@ public class TemplateRegistry {
         templateDescriptors.add(new TemplateDescriptor("<html><i>Spock</i>" + TemplateIcons.Groovy.asHtml() + "</html>",
                 "<html><i>Spock</i></html>",
                 SPOCK, Language.Groovy, TemplateRole.Tester));
+        templateDescriptors.add(new TemplateDescriptor("<html><i>Spock+PowerMock</i>" + TemplateIcons.Groovy.asHtml() +
+                "</html>",
+                "<html><i>Spock+PowerMock</i></html>",
+                SPOCK_POWERMOCK, Language.Groovy, TemplateRole.Tester));
     }
 
     public List<TemplateDescriptor> getTemplateDescriptors() {

@@ -1,8 +1,8 @@
 <idea-plugin>
-  <id>com.weirddev.testme</id>
-  <name>TestMe</name>
-  <version>5.0.0</version>
-  <vendor email="testme@weirddev.com" url="http://weirddev.com">WeirdDev</vendor>
+  <id>com.gy.ut.template</id>
+  <name>Idea-Unit-Test-Template</name>
+  <version>1.0.0</version>
+  <vendor email="1426555734@qq.com" url="http://hellogy.cn">GyDev</vendor>
 
   <description><![CDATA[
    <p>Auto Generate Unit Tests in Java, Groovy or Scala.</p>
@@ -37,7 +37,7 @@
     ]]>
   </change-notes>
     <!-- please see https://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="190"/>
+    <idea-version since-build="193"/>
   <depends>com.intellij.modules.java</depends>
   <depends>JUnit</depends>
   <depends optional="true" config-file="plugin-groovy.xml">org.intellij.groovy</depends>
