@@ -8,60 +8,64 @@ import spock.lang.*
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+
 //import static org.mockito.Mockito.*
 #end
 
 #parse("File Header.java")
 class ${CLASS_NAME}  extends Specification {
-def testObj = new $TESTED_CLASS.canonicalName ()
+def testObj = new $TESTED_CLASS.canonicalName ( )
 #getRenderMockedFields($TESTED_CLASS.fields)
 #if($hasMocks)
-    def setup() {
+def setup ( ) {
 
-      #foreach($field in $TESTED_CLASS.fields)
-      #if($MockitoMockBuilder.isMockable($field))
-          testObj.$field.name = $field.name
-      #end
-      #end
-   }
+    #foreach($field in $TESTED_CLASS.fields)
+        #if($MockitoMockBuilder.isMockable($field))
+        testObj.$field.name = $field.name
+        #end
+    #end
+}
 #end
 #foreach($method in $TESTED_CLASS.methods)
-#if($TestSubjectUtils.shouldBeTested($method))
-#set($paraTestComponents=$TestBuilder.buildPrameterizedTestComponents($method,$grReplacementTypesForReturn,$grReplacementTypes,$grDefaultTypeValues))
+    #if($TestSubjectUtils.shouldBeTested($method))
+        #set($paraTestComponents=$TestBuilder.buildPrameterizedTestComponents($method,$grReplacementTypesForReturn,$grReplacementTypes,$grDefaultTypeValues))
 
     @Unroll
     def "$method.name"() {
-#if($MockitoMockBuilder.shouldStub($method,$TESTED_CLASS.fields))
+        #if($MockitoMockBuilder.shouldStub($method,$TESTED_CLASS.fields))
         given: "设定相关方法入参"
 
         and: "Mock相关接口返回"
-        #foreach($field in $TESTED_CLASS.fields)
-        #if($MockitoMockBuilder.isMockable($field))
-        #foreach($fieldMethod in $field.type.methods)
-        #if($method.returnType && $fieldMethod.returnType.name !="void" && $TestSubjectUtils.isMethodCalled($fieldMethod,$method))
-        $field.name.${fieldMethod.name}($MockitoMockBuilder.buildMockArgsMatchers(${fieldMethod.methodParams},"Groovy")) >> $TestBuilder.renderReturnParam($method,$fieldMethod.returnType,"${fieldMethod.name}Response",$grReplacementTypes,$grDefaultTypeValues)
-#end
-#end
-#end
-#end
+            #foreach($field in $TESTED_CLASS.fields)
+                #if($MockitoMockBuilder.isMockable($field))
+                    #foreach($fieldMethod in $field.type.methods)
+                        #if($method.returnType && $fieldMethod.returnType.name !=
+                            "void" && $TestSubjectUtils.isMethodCalled($fieldMethod,$method))
+                            $field.name.${fieldMethod.name}($MockitoMockBuilder.buildMockArgsMatchers(${fieldMethod.methodParams},
+                            "Groovy")) >> $TestBuilder.renderReturnParam($method,$fieldMethod.returnType,
+                            "${fieldMethod.name}Response",$grReplacementTypes,$grDefaultTypeValues)
+                        #end
+                    #end
+                #end
+            #end
 
-#end
-        when:
-        def expectedResult =  #getRenderParameterizedMethodCall($method, $TESTED_CLASS.name, $paraTestComponents.methodClassParamsStr)
+        #end
+    when:
+    def expectedResult =  #getRenderParameterizedMethodCall($method, $TESTED_CLASS.name, $paraTestComponents.methodClassParamsStr)
 
-#if(!$method.hasReturn())
+        #if(!$method.hasReturn())
 
         assert expectedResult == false //todo - validate something
-#end
+        #end
 
-     then: "验证返回结果里属性值是否符合预期"
-     with(expectedResult) {
-
-     }
-     where: "表格方式验证多种分支调用场景"
-     $TestSubjectUtils.formatSpockDataParameters($paraTestComponents.paramsMap, "        ")
+    then: "验证返回结果里属性值是否符合预期"
+    with ( expectedResult ) {
+        $TestSubjectUtils.formatSpockDataResults($method,$grReplacementTypesForReturn,$grReplacementTypes,$grDefaultTypeValues)
     }
-#end
+    where: "表格方式验证多种分支调用场景"
+        $TestSubjectUtils.formatSpockDataParameters($method,$grDefaultTypeValues)
+    }
+    #end
 #end
 }
 

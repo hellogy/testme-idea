@@ -3,6 +3,8 @@ package com.weirddev.testme.intellij.template.context;
 import com.intellij.openapi.diagnostic.Logger;
 import com.weirddev.testme.intellij.utils.ClassNameUtils;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.CollectionUtil;
+import org.jf.util.CollectionUtils;
 
 import java.util.*;
 
@@ -13,8 +15,7 @@ import java.util.*;
  * @author Yaron Yamin
  */
 @SuppressWarnings("unused")
-public class TestSubjectInspector
-{
+public class TestSubjectInspector {
     private static final Logger LOG = Logger.getInstance(TestSubjectInspector.class.getName());
 
     private static final Set<String> JAVA_FUTURE_TYPES = new HashSet<>(Arrays.asList("java.util.concurrent.Future", "java.util.concurrent.CompletableFuture", "java.util.concurrent.RunnableFuture",
@@ -22,7 +23,7 @@ public class TestSubjectInspector
             "java.util.concurrent.ExecutorCompletionService.QueueingFuture", "java.util.concurrent.ForkJoinTask.AdaptedRunnable", "java.util.concurrent.ForkJoinTask.AdaptedCallable", "java.util.concurrent.ForkJoinTask",
             "java.util.concurrent.ForkJoinTask.AdaptedRunnableAction", "java.util.concurrent.CountedCompleter", "java.util.concurrent.RecursiveTask", "java.util.concurrent.ForkJoinTask.RunnableExecuteAction",
             "java.util.concurrent.CompletableFuture.AsyncSupply", "java.util.concurrent.RecursiveAction", "java.util.concurrent.CompletableFuture.Completion", "java.util.concurrent.ScheduledFuture", "java.util.concurrent.RunnableScheduledFuture"));
-    private static final Set<String> SCALA_FUTURE_TYPES = new HashSet<String>(Arrays.asList("scala.concurrent.Future","scala.concurrent.impl.Promise"));
+    private static final Set<String> SCALA_FUTURE_TYPES = new HashSet<String>(Arrays.asList("scala.concurrent.Future", "scala.concurrent.impl.Promise"));
     private boolean generateTestsForInheritedMethods;
 
     public TestSubjectInspector(boolean generateTestsForInheritedMethods) {
@@ -43,11 +44,10 @@ public class TestSubjectInspector
      * @return true - if method should is testable according to it's access modifiers and TestMe configuration
      */
     public boolean shouldBeTested(Method method) {
-        return method.isTestable() && ( generateTestsForInheritedMethods || !method.isInherited());
+        return method.isTestable() && (generateTestsForInheritedMethods || !method.isInherited());
     }
 
     /**
-     *
      * @param calledMethod a calledMethod, possible being called
      * @param callerMethod a calledMethod, possibly calling another
      * @return true - if callerMethod implementation invokes calledMethod
@@ -66,8 +66,7 @@ public class TestSubjectInspector
     }
 
     /**
-     *
-     * @param paramsMap test params for spock parameterized test
+     * @param paramsMap       test params for spock parameterized test
      * @param methodHasReturn true - if test method returns anything
      * @return formatted string of spock test method name with tested parameters
      */
@@ -79,8 +78,7 @@ public class TestSubjectInspector
             if (!TestBuilder.RESULT_VARIABLE_NAME.equals(param)) {
                 if (sb.length() == 0) {
                     sb.append(" where ");
-                }
-                else if (sb.length() > 0) {
+                } else if (sb.length() > 0) {
                     sb.append(" and ");
                 }
                 sb.append(param).append("=#").append(param);
@@ -94,7 +92,8 @@ public class TestSubjectInspector
 
     /**
      * Consutrcuts a formatted string of parameterized params table for spock test. should probably be deprecated in the future, in favor of a method accepting paramsMap of Map<String,List<String>> for multiple values per input argument
-     * @param paramsMap map of test arguments. for constructing a single parameterized row.
+     *
+     * @param paramsMap  map of test arguments. for constructing a single parameterized row.
      * @param linePrefix prefix add to resulting test params, typically used for indentation when passing the required preceding white spaces
      * @return formatted string of parameterized params table for spock test.
      */
@@ -112,8 +111,7 @@ public class TestSubjectInspector
         }
         if (hasInputParams) {
             sb.append(" || ").append(TestBuilder.RESULT_VARIABLE_NAME).append("\n");
-        }
-        else {
+        } else {
             sb.append(TestBuilder.RESULT_VARIABLE_NAME).append(" << ");
         }
         final int headerLength = sb.length();
@@ -131,6 +129,37 @@ public class TestSubjectInspector
             sb.append(" || ");
         }
         sb.append(resultVal);
+        return sb.toString();
+    }
+
+    public String formatSpockDataParameters(Map<String, String> paramsMap, String linePrefix, Method method, Map<String, String> defaultTypeValues) {//todo - should accept Map<String,List<String>> paramsMap instead
+        StringBuilder sb = new StringBuilder();
+        final Set<String> paramNameKeys = paramsMap.keySet();
+        final boolean hasInputParams = hasInputParams(paramNameKeys);
+        for (String param : paramNameKeys) {
+            if (!TestBuilder.RESULT_VARIABLE_NAME.equals(param)) {
+                if (sb.length() > 0) {
+                    sb.append(" | ");
+                }
+                sb.append(param);
+            }
+        }
+        if (hasInputParams) {
+            sb.append(formatSpockDataResultsTitle(method, defaultTypeValues)).append("\n");
+        } else {
+            sb.append(TestBuilder.RESULT_VARIABLE_NAME).append(" << ");
+        }
+        final int headerLength = sb.length();
+        for (String param : paramNameKeys) {
+            if (!TestBuilder.RESULT_VARIABLE_NAME.equals(param)) {
+                if (headerLength < sb.length()) {
+                    sb.append(" | ");
+                }
+                sb.append(paramsMap.get(param));
+            }
+        }
+        String resultVal = formatSpockDataResultsData(method, defaultTypeValues);
+        sb.append(resultVal).append("\n");
         return sb.toString();
     }
 
@@ -171,11 +200,12 @@ public class TestSubjectInspector
     }
 
     /**
-     *  find an optimal constructor in type declaration. a constructor that seems best suited to initialize the type.
+     * find an optimal constructor in type declaration. a constructor that seems best suited to initialize the type.
+     *
      * @param type a Type that has constructors
      * @return the optimal constructor found
      */
-    public @Nullable Method findOptimalConstructor(Type type){
+    public @Nullable Method findOptimalConstructor(Type type) {
         final Optional<Method> optPrimaryCtor = Optional.of(type.getMethods()).flatMap(methods -> methods.stream().filter(Method::isPrimaryConstructor).findAny());
         return optPrimaryCtor.orElse(findBiggestValidConstructor(type));
     }
@@ -215,5 +245,58 @@ public class TestSubjectInspector
         return paramNameKeys.size() > 1 || paramNameKeys.size() == 1 && !paramNameKeys.contains(TestBuilder.RESULT_VARIABLE_NAME);
     }
 
+    public String formatSpockDataResults(Method method, Map<String, String> replacementTypesForReturn, Map<String, String> replacementTypes, Map<String, String> defaultTypeValues) {//todo - should accept Map<String,List<String>> paramsMap instead
+        StringBuilder sb = new StringBuilder();
+        try {
+            if (method.getReturnType().isArray() || Collection.class.isAssignableFrom(method.getReturnType().getClass())) {
+                sb.append("expectedResult.size == size");
+                return sb.toString();
+            }
+            for (Field field : method.getReturnType().getFields()) {
+                if (defaultTypeValues.containsKey(field.getType().getCanonicalName())) {
+                    sb.append("expectedResult.").append((field.getName())).append(" == ").append(field.getName()).append("\n");
+                }
+            }
 
+        } catch (Exception e) {
+            sb.append("expectedResult == result");
+        }
+        return sb.toString();
+    }
+
+    public String formatSpockDataResultsTitle(Method method, Map<String, String> defaultTypeValues) {//todo - should accept Map<String,List<String>> paramsMap instead
+        StringBuilder sb = new StringBuilder();
+        try {
+            if (defaultTypeValues.containsKey(method.getReturnType().getName())) {
+                sb.append(" || ").append(" result ");
+                return sb.toString();
+            }
+            for (Field field : method.getReturnType().getFields()) {
+                if (defaultTypeValues.containsKey(field.getType().getCanonicalName())) {
+                    sb.append(" || ").append(field.getName()).append(" | ");
+                }
+            }
+        } catch (Exception e) {
+            sb.append("");
+        }
+        return sb.toString();
+    }
+
+    public String formatSpockDataResultsData(Method method, Map<String, String> defaultTypeValues) {//todo - should accept Map<String,List<String>> paramsMap instead
+        StringBuilder sb = new StringBuilder();
+        try {
+            if (defaultTypeValues.containsKey(method.getReturnType().getName())) {
+                sb.append(" || ").append(defaultTypeValues.getOrDefault(method.getReturnType(), "_"));
+                return sb.toString();
+            }
+            for (Field field : method.getReturnType().getFields()) {
+                if (defaultTypeValues.containsKey(field.getType().getCanonicalName())) {
+                    sb.append(" || ").append(defaultTypeValues.getOrDefault(field.getType().getCanonicalName(), "_")).append(" | ");
+                }
+            }
+        } catch (Exception e) {
+            sb.append("_");
+        }
+        return sb.toString();
+    }
 }
