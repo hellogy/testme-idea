@@ -70,10 +70,10 @@ def testObj = new $TESTED_CLASS.canonicalName ()
 
      then: "验证返回结果里属性值是否符合预期"
      with(expectedResult) {
-
+    $TestSubjectUtils.formatSpockDataResults($method,$grReplacementTypesForReturn,$grReplacementTypes,$grDefaultTypeValues)
      }
      where: "表格方式验证多种分支调用场景"
-     $TestSubjectUtils.formatSpockDataParameters($paraTestComponents.paramsMap, "        ")
+    $TestSubjectUtils.formatSpockDataParameters($paraTestComponents.paramsMap, "        ",$method,$grDefaultTypeValues)
     }
 #end
 #end

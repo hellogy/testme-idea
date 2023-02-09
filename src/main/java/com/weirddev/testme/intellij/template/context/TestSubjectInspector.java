@@ -3,8 +3,6 @@ package com.weirddev.testme.intellij.template.context;
 import com.intellij.openapi.diagnostic.Logger;
 import com.weirddev.testme.intellij.utils.ClassNameUtils;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.CollectionUtil;
-import org.jf.util.CollectionUtils;
 
 import java.util.*;
 
@@ -18,12 +16,20 @@ import java.util.*;
 public class TestSubjectInspector {
     private static final Logger LOG = Logger.getInstance(TestSubjectInspector.class.getName());
 
-    private static final Set<String> JAVA_FUTURE_TYPES = new HashSet<>(Arrays.asList("java.util.concurrent.Future", "java.util.concurrent.CompletableFuture", "java.util.concurrent.RunnableFuture",
-            "java.util.concurrent.ForkJoinTask.AdaptedRunnableAction", "java.util.concurrent.RunnableScheduledFuture", "java.util.concurrent.ScheduledThreadPoolExecutor.ScheduledFutureTask", "java.util.concurrent.FutureTask",
-            "java.util.concurrent.ExecutorCompletionService.QueueingFuture", "java.util.concurrent.ForkJoinTask.AdaptedRunnable", "java.util.concurrent.ForkJoinTask.AdaptedCallable", "java.util.concurrent.ForkJoinTask",
-            "java.util.concurrent.ForkJoinTask.AdaptedRunnableAction", "java.util.concurrent.CountedCompleter", "java.util.concurrent.RecursiveTask", "java.util.concurrent.ForkJoinTask.RunnableExecuteAction",
-            "java.util.concurrent.CompletableFuture.AsyncSupply", "java.util.concurrent.RecursiveAction", "java.util.concurrent.CompletableFuture.Completion", "java.util.concurrent.ScheduledFuture", "java.util.concurrent.RunnableScheduledFuture"));
-    private static final Set<String> SCALA_FUTURE_TYPES = new HashSet<String>(Arrays.asList("scala.concurrent.Future", "scala.concurrent.impl.Promise"));
+    private static final Set<String> JAVA_FUTURE_TYPES = new HashSet<>(Arrays.asList("java.util.concurrent.Future",
+            "java.util.concurrent.CompletableFuture", "java.util.concurrent.RunnableFuture",
+            "java.util.concurrent.ForkJoinTask.AdaptedRunnableAction", "java.util.concurrent.RunnableScheduledFuture"
+            , "java.util.concurrent.ScheduledThreadPoolExecutor.ScheduledFutureTask", "java.util.concurrent.FutureTask",
+            "java.util.concurrent.ExecutorCompletionService.QueueingFuture", "java.util.concurrent.ForkJoinTask" +
+                    ".AdaptedRunnable", "java.util.concurrent.ForkJoinTask.AdaptedCallable", "java.util.concurrent" +
+                    ".ForkJoinTask",
+            "java.util.concurrent.ForkJoinTask.AdaptedRunnableAction", "java.util.concurrent.CountedCompleter", "java" +
+                    ".util.concurrent.RecursiveTask", "java.util.concurrent.ForkJoinTask.RunnableExecuteAction",
+            "java.util.concurrent.CompletableFuture.AsyncSupply", "java.util.concurrent.RecursiveAction", "java.util" +
+                    ".concurrent.CompletableFuture.Completion", "java.util.concurrent.ScheduledFuture", "java.util" +
+                    ".concurrent.RunnableScheduledFuture"));
+    private static final Set<String> SCALA_FUTURE_TYPES = new HashSet<String>(Arrays.asList("scala.concurrent.Future"
+            , "scala.concurrent.impl.Promise"));
     private boolean generateTestsForInheritedMethods;
 
     public TestSubjectInspector(boolean generateTestsForInheritedMethods) {
@@ -61,7 +67,8 @@ public class TestSubjectInspector {
                 break;
             }
         }
-        LOG.debug("calledMethod " + calledMethod.getMethodId() + " searched in " + methodCalls.size() + " calledMethod calls by tested calledMethod " + callerMethod.getMethodId() + " - is found:" + isMethodCalled);
+        LOG.debug("calledMethod " + calledMethod.getMethodId() + " searched in " + methodCalls.size() + " " +
+                "calledMethod calls by tested calledMethod " + callerMethod.getMethodId() + " - is found:" + isMethodCalled);
         return isMethodCalled;
     }
 
@@ -91,13 +98,17 @@ public class TestSubjectInspector {
     }
 
     /**
-     * Consutrcuts a formatted string of parameterized params table for spock test. should probably be deprecated in the future, in favor of a method accepting paramsMap of Map<String,List<String>> for multiple values per input argument
+     * Consutrcuts a formatted string of parameterized params table for spock test. should probably be deprecated in
+     * the future, in favor of a method accepting paramsMap of Map<String,List<String>> for multiple values per input
+     * argument
      *
      * @param paramsMap  map of test arguments. for constructing a single parameterized row.
-     * @param linePrefix prefix add to resulting test params, typically used for indentation when passing the required preceding white spaces
+     * @param linePrefix prefix add to resulting test params, typically used for indentation when passing the
+     *                   required preceding white spaces
      * @return formatted string of parameterized params table for spock test.
      */
-    public String formatSpockDataParameters(Map<String, String> paramsMap, String linePrefix) {//todo - should accept Map<String,List<String>> paramsMap instead
+    public String formatSpockDataParameters(Map<String, String> paramsMap, String linePrefix) {//todo - should accept
+        // Map<String,List<String>> paramsMap instead
         StringBuilder sb = new StringBuilder();
         final Set<String> paramNameKeys = paramsMap.keySet();
         final boolean hasInputParams = hasInputParams(paramNameKeys);
@@ -132,7 +143,9 @@ public class TestSubjectInspector {
         return sb.toString();
     }
 
-    public String formatSpockDataParameters(Map<String, String> paramsMap, String linePrefix, Method method, Map<String, String> defaultTypeValues) {//todo - should accept Map<String,List<String>> paramsMap instead
+    public String formatSpockDataParameters(Map<String, String> paramsMap, String linePrefix, Method method,
+                                            Map<String, String> defaultTypeValues) {//todo - should accept
+        // Map<String,List<String>> paramsMap instead
         StringBuilder sb = new StringBuilder();
         final Set<String> paramNameKeys = paramsMap.keySet();
         final boolean hasInputParams = hasInputParams(paramNameKeys);
@@ -206,7 +219,8 @@ public class TestSubjectInspector {
      * @return the optimal constructor found
      */
     public @Nullable Method findOptimalConstructor(Type type) {
-        final Optional<Method> optPrimaryCtor = Optional.of(type.getMethods()).flatMap(methods -> methods.stream().filter(Method::isPrimaryConstructor).findAny());
+        final Optional<Method> optPrimaryCtor =
+                Optional.of(type.getMethods()).flatMap(methods -> methods.stream().filter(Method::isPrimaryConstructor).findAny());
         return optPrimaryCtor.orElse(findBiggestValidConstructor(type));
     }
 
@@ -245,10 +259,13 @@ public class TestSubjectInspector {
         return paramNameKeys.size() > 1 || paramNameKeys.size() == 1 && !paramNameKeys.contains(TestBuilder.RESULT_VARIABLE_NAME);
     }
 
-    public String formatSpockDataResults(Method method, Map<String, String> replacementTypesForReturn, Map<String, String> replacementTypes, Map<String, String> defaultTypeValues) {//todo - should accept Map<String,List<String>> paramsMap instead
+    public String formatSpockDataResults(Method method, Map<String, String> replacementTypesForReturn, Map<String,
+            String> replacementTypes, Map<String, String> defaultTypeValues) {//todo - should accept Map<String,
+        // List<String>> paramsMap instead
         StringBuilder sb = new StringBuilder();
         try {
-            if (method.getReturnType().isArray() || Collection.class.isAssignableFrom(method.getReturnType().getClass())) {
+            if (method.getReturnType().isArray() || Collection.class.isAssignableFrom(method.getReturnType().getClass())
+                    || (method.getReturnType().getComposedTypes() != null && method.getReturnType().getComposedTypes().size() > 0)) {
                 sb.append("expectedResult.size == size");
                 return sb.toString();
             }
@@ -261,39 +278,58 @@ public class TestSubjectInspector {
         } catch (Exception e) {
             sb.append("expectedResult == result");
         }
+        if(sb.length()==0){
+            sb.append("expectedResult == result");
+        }
         return sb.toString();
     }
 
-    public String formatSpockDataResultsTitle(Method method, Map<String, String> defaultTypeValues) {//todo - should accept Map<String,List<String>> paramsMap instead
+    public String formatSpockDataResultsTitle(Method method, Map<String, String> defaultTypeValues) {//todo - should
+        // accept Map<String,List<String>> paramsMap instead
         StringBuilder sb = new StringBuilder();
+        sb.append(" || ");
         try {
+            if (method.getReturnType().isArray() || Collection.class.isAssignableFrom(method.getReturnType().getClass())
+                    || (method.getReturnType().getComposedTypes() != null && method.getReturnType().getComposedTypes().size() > 0)) {
+                sb.append("size");
+                return sb.toString();
+            }
             if (defaultTypeValues.containsKey(method.getReturnType().getName())) {
-                sb.append(" || ").append(" result ");
+                sb.append(" result ");
                 return sb.toString();
             }
             for (Field field : method.getReturnType().getFields()) {
                 if (defaultTypeValues.containsKey(field.getType().getCanonicalName())) {
-                    sb.append(" || ").append(field.getName()).append(" | ");
+                    sb.append(field.getName()).append(" | ");
                 }
             }
+            sb.deleteCharAt(sb.length()-2);
         } catch (Exception e) {
             sb.append("");
         }
         return sb.toString();
     }
 
-    public String formatSpockDataResultsData(Method method, Map<String, String> defaultTypeValues) {//todo - should accept Map<String,List<String>> paramsMap instead
+    public String formatSpockDataResultsData(Method method, Map<String, String> defaultTypeValues) {//todo - should
+        // accept Map<String,List<String>> paramsMap instead
         StringBuilder sb = new StringBuilder();
+        sb.append(" || ");
         try {
+            if (method.getReturnType().isArray() || Collection.class.isAssignableFrom(method.getReturnType().getClass())
+                    || (method.getReturnType().getComposedTypes() != null && method.getReturnType().getComposedTypes().size() > 0)) {
+                sb.append(" 0 ");
+                return sb.toString();
+            }
             if (defaultTypeValues.containsKey(method.getReturnType().getName())) {
-                sb.append(" || ").append(defaultTypeValues.getOrDefault(method.getReturnType(), "_"));
+                sb.append(defaultTypeValues.getOrDefault(method.getReturnType(), "_"));
                 return sb.toString();
             }
             for (Field field : method.getReturnType().getFields()) {
                 if (defaultTypeValues.containsKey(field.getType().getCanonicalName())) {
-                    sb.append(" || ").append(defaultTypeValues.getOrDefault(field.getType().getCanonicalName(), "_")).append(" | ");
+                    sb.append(defaultTypeValues.getOrDefault(field.getType().getCanonicalName(), "_")).append(" | ");
                 }
             }
+            sb.deleteCharAt(sb.length()-2);
         } catch (Exception e) {
             sb.append("_");
         }
